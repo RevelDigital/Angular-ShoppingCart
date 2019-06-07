@@ -3,7 +3,8 @@ import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angular
 import { Product } from '../models/product';
 import { AuthService } from './auth.service';
 import { ToastrService } from './toastr.service';
-
+import {HttpClient} from "@angular/common/http";
+declare let Client;
 @Injectable()
 export class ProductService {
 	products: AngularFireList<Product>;
@@ -20,7 +21,8 @@ export class ProductService {
 	constructor(
 		private db: AngularFireDatabase,
 		private authService: AuthService,
-		private toastrService: ToastrService
+		private toastrService: ToastrService,
+    private http: HttpClient
 	) {
 		this.calculateLocalFavProdCounts();
 		this.calculateLocalCartProdCounts();
@@ -117,6 +119,15 @@ export class ProductService {
 		a = JSON.parse(localStorage.getItem('avct_item')) || [];
 
 		a.push(data);
+		Client.newEventSession(Window["sessionID"]);
+    Client.track('add-product', JSON.stringify(data));
+    // this.http.post('https://api.reveldigital.com/api/devices/'+'4rdJw8N0r3Oso3SBsX2dbQ'+'/track?api_key=ZkgKeTifhhorIddmsChryA', {
+    //   "session_id": Window["sessionID"],
+    //   "event_name": "add-product",
+    //   "properties": data
+    // }).subscribe(()=>{
+    //
+    // });
 		this.toastrService.wait('Adding Product to Cart', 'Product Adding to the cart');
 		setTimeout(() => {
 			localStorage.setItem('avct_item', JSON.stringify(a));

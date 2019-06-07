@@ -1,9 +1,11 @@
 import { TranslateService } from 'src/app/shared/services/translate.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ApplicationRef } from '@angular/core';
 import { Product } from 'src/app/shared/models/product';
 import { ProductService } from 'src/app/shared/services/product.service';
 import { ToastrService } from 'src/app/shared/services/toastr.service';
-
+import {Router} from "@angular/router";
+import {HttpClient} from "@angular/common/http";
+declare let Client;
 @Component({
 	selector: 'app-best-product',
 	templateUrl: './best-product.component.html',
@@ -16,8 +18,13 @@ export class BestProductComponent implements OnInit {
 	constructor(
 		private productService: ProductService,
 		private toasterService: ToastrService,
-		public translate: TranslateService
-	) {}
+		public translate: TranslateService,
+    private router: Router,
+    private app: ApplicationRef,
+    private http: HttpClient
+	) {
+    window['Controller'] = this;
+  }
 
 	ngOnInit() {
 		this.options = {
@@ -35,6 +42,31 @@ export class BestProductComponent implements OnInit {
 		};
 		this.getAllProducts();
 	}
+
+	productLookup(name){
+    for(const val of this.bestProducts){
+      if(val.productName.toLowerCase() == name.toLowerCase()){
+        Client.newEventSession(Window["sessionID"]);
+        Client.track("view-product", JSON.stringify(val));
+        // this.http.post('https://api.reveldigital.com/api/devices/'+'4rdJw8N0r3Oso3SBsX2dbQ'+'/track?api_key=ZkgKeTifhhorIddmsChryA', {
+        //   "session_id": Window["sessionID"],
+        //   "event_name": "view-product",
+        //   "properties": val
+        // }).subscribe(()=>{
+        //
+        // });
+        this.router.navigate(['/products/product', val.$key]).then( (e) => {
+          if (e) {
+            this.app.tick();
+            console.log("Navigation is successful!");
+          } else {
+            console.log("Navigation has failed!");
+          }
+        });
+        break;
+      }
+    }
+  }
 
 	getAllProducts() {
 		this.loading = true;
