@@ -14,7 +14,7 @@
   </div>
 
   <div *ngIf="loading">
-    <app-card-loader [loop]="4" [height]="500"></app-card-loader>
+    <app-card-loader [loop]="2" [height]="500"></app-card-loader>
   </div>
 
   <owl-carousel *ngIf="!loading" [options]="options" [items]="bestProducts" [carouselClasses]="['owl-theme', 'row', 'sliding']">
@@ -28,7 +28,7 @@
           <!--Card image-->
           <a [routerLink]="['/products/product', product.$key]">
             <div class="view overlay hm-white-slight">
-              <img [src]="product.productImageUrl" class="img-fluid" alt="" width="360px" style="height: 14.5vw">
+              <img [src]="product.productImageUrl" class="img-fluid" alt="" width="360px" style="height: 35vw">
               <a>
                 <div class="mask waves-effect waves-light" mdbRippleRadius></div>
               </a>
